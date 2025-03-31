@@ -1,23 +1,26 @@
-# Build Stage
+# Use the official .NET SDK as the build image
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ScrapperGateway/ScrapperGateway.csproj ScrapperGateway/
-COPY DataLayer/DataLayer.csproj DataLayer/
-COPY ServicesLayer/ServicesLayer.csproj ServicesLayer/
+# Copy the .csproj file and restore dependencies
+COPY ["ScrapperGateway/ScrapperGateway.csproj", "ScrapperGateway/"]
 RUN dotnet restore "ScrapperGateway/ScrapperGateway.csproj"
 
+# Copy the rest of the source code and build the project
 COPY . .
-RUN dotnet build "ScrapperGateway/ScrapperGateway.csproj" -c Release -o /app/build
+WORKDIR /src/ScrapperGateway
+RUN dotnet build "ScrapperGateway.csproj" -c Release -o /app/build
 
-# Publish Stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS publish
+# Use the official .NET runtime as the final image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+# Copy the build output from the previous stage
 COPY --from=build /app/build .
-RUN dotnet publish "ScrapperGateway/ScrapperGateway.csproj" -c Release -o /app/publish
 
-# Final Stage (Runtime Image)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=publish /app/publish .
+# Expose the port the application runs on
+EXPOSE 80
+EXPOSE 443
+
+# Start the application
 ENTRYPOINT ["dotnet", "ScrapperGateway.dll"]
