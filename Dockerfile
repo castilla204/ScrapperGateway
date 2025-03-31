@@ -10,11 +10,13 @@ COPY ScrapperGateway/ScrapperGateway.csproj ScrapperGateway/
 COPY DataLayer/DataLayer.csproj DataLayer/
 COPY ServicesLayer/ServicesLayer.csproj ServicesLayer/
 
-# Limpiar caché de NuGet y restaurar dependencias
+# Limpiar la caché de NuGet
 RUN dotnet nuget locals all --clear
-RUN dotnet restore "ScrapperGateway/ScrapperGateway.csproj"
 
-# Copiar el resto del código fuente
+# Restaurar dependencias
+RUN dotnet restore "ScrapperGateway/ScrapperGateway.csproj" --source https://api.nuget.org/v3/index.json
+
+# Copiar el resto del código
 COPY . .
 
 # Compilar el proyecto
