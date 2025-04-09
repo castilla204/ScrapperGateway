@@ -38,15 +38,21 @@ builder.Services.AddScoped<IWeb3Service, Web3Service>();
 builder.Services.AddScoped<IWebMixerService, WebMixerService>();
 
 // Configure RabbitMQ
-builder.Services.AddSingleton<IConnectionFactory>(new ConnectionFactory
+builder.Services.AddSingleton<IConnectionFactory>(sp =>
 {
-    HostName = "localhost",
-    UserName = "guest",
-    Password = "guest",
-    RequestedHeartbeat = TimeSpan.FromSeconds(60),
-    NetworkRecoveryInterval = TimeSpan.FromSeconds(10),
-    AutomaticRecoveryEnabled = true,
-    RequestedConnectionTimeout = TimeSpan.FromSeconds(30)
+    var config = builder.Configuration;
+    var isDevelopment = builder.Environment.IsDevelopment();
+    return new ConnectionFactory
+    {
+        HostName = isDevelopment ? "localhost" : config["RABBITMQ_HOST"] ?? "rabbitmq-svc",
+        Port = int.Parse(config["RABBITMQ_PORT"] ?? "5672"),
+        UserName = config["RABBITMQ_USER"] ?? "admin",
+        Password = config["RABBITMQ_PASSWORD"] ?? "REEMPLAZAR",
+        RequestedHeartbeat = TimeSpan.FromSeconds(60),
+        NetworkRecoveryInterval = TimeSpan.FromSeconds(10),
+        AutomaticRecoveryEnabled = true,
+        RequestedConnectionTimeout = TimeSpan.FromSeconds(30)
+    };
 });
 
 // Add RabbitMQ Consumer Service
@@ -69,7 +75,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -80,7 +85,6 @@ if (app.Environment.IsDevelopment())
 var url = "http://localhost:7555";
 app.Urls.Add(url);
 
-// Use CORS before other middleware
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
