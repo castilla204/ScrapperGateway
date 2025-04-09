@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: search-daemon
+  name: scrapper-gateway
   namespace: default
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: search-daemon
+      app: scrapper-gateway
   template:
     metadata:
       labels:
-        app: search-daemon
+        app: scrapper-gateway
     spec:
       containers:
-      - name: search-daemon
-        image: erizo9/searchdaemon:latest
+      - name: scrapper-gateway
+        image: erizo9/scrappergateway:latest
         ports:
         - containerPort: 80
         env:
@@ -31,26 +31,26 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: search-daemon-svc
+  name: scrapper-gateway-svc
   namespace: default
 spec:
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: search-daemon
+    app: scrapper-gateway
   type: NodePort
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: search-daemon-hpa
+  name: scrapper-gateway-hpa
   namespace: default
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: search-daemon
+    name: scrapper-gateway
   minReplicas: 2
   maxReplicas: 10
   metrics:
