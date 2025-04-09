@@ -21,6 +21,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configurar la cadena de conexión según el entorno
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration["ConnectionStrings:PostgresConnection"] = "Host=localhost;Port=5432;Username=postgres;Password=REEMPLAZAR;Database=grup";
+}
+else
+{
+    builder.Configuration["ConnectionStrings:PostgresConnection"] = "Host=postgres-svc;Port=5432;Username=admin;Password=REEMPLAZAR;Database=atrapo";
+}
+
 // Configure PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
