@@ -49,6 +49,7 @@ public class WebMixerService : IWebMixerService
     private List<Categorys> categorias;
     private List<AdLight> potentialDeals;
     private List<AdModel> allAdsList;
+    private readonly IConfiguration _configuration;
     private AppDbContext _context;
     private string categoryString = "";
 
@@ -65,9 +66,10 @@ public class WebMixerService : IWebMixerService
         _web2Data = web2Data;
         _web3Data = web3Data;
         _mapper = mapper;
-        _webClient = new WebClient(); // Inicializa _webClient aquí
+        _webClient = new WebClient();
         potentialDeals = new();
-        Console.WriteLine("WebMixerService inicializado correctamente.");
+        _configuration = configuration; // Asegúrate de almacenar configuration en un campo privado
+        Console.WriteLine($"WebMixerService inicializado. Entorno: {_configuration["ASPNETCORE_ENVIRONMENT"]}");
     }
 
     //funcion busqueda general
@@ -589,7 +591,19 @@ public class WebMixerService : IWebMixerService
             }
             Console.WriteLine($"Mapeo de categoría encontrado: {categoryMapping.UrlParameter}");
 
-            var url = "http://localhost:7000/ads";
+            // Obtener la URL según el entorno
+            var milanunciosUrlKey = _configuration["ASPNETCORE_ENVIRONMENT"] == "Development"
+                ? "MilanunciosService:DevelopmentUrl"
+                : "MilanunciosService:ProductionUrl";
+            var url = _configuration[milanunciosUrlKey];
+
+            if (string.IsNullOrEmpty(url))
+            {
+                Console.WriteLine("Error: No se encontró la URL del servicio de Milanuncios en la configuración.");
+                throw new InvalidOperationException("No se encontró la URL del servicio de Milanuncios.");
+            }
+            Console.WriteLine($"Usando URL de Milanuncios: {url}");
+
             var requestBody = new
             {
                 searchTerms = request.Keywords,
