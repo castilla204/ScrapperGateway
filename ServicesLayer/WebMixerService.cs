@@ -592,10 +592,8 @@ public class WebMixerService : IWebMixerService
             Console.WriteLine($"Mapeo de categoría encontrado: {categoryMapping.UrlParameter}");
 
             // Obtener la URL según el entorno
-            var milanunciosUrlKey = _configuration["ASPNETCORE_ENVIRONMENT"] == "Development"
-                ? "MilanunciosService:DevelopmentUrl"
-                : "MilanunciosService:ProductionUrl";
-            var url = _configuration[milanunciosUrlKey];
+
+            var url = "http://milanuncios-scrapper-py-svc:7000/ads";
 
             if (string.IsNullOrEmpty(url))
             {

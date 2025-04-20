@@ -24,11 +24,13 @@ builder.Services.AddSwaggerGen();
 // Configurar la cadena de conexión según el entorno
 if (builder.Environment.IsDevelopment())
 {
+    builder.Configuration["MilAnunciosService:MilAnunciosScrapperPy"] = "http://localhost:7000/ads";
     builder.Configuration["ConnectionStrings:PostgresConnection"] = "Host=localhost;Port=5432;Username=postgres;Password=REEMPLAZAR;Database=grup";
 }
 else
 {
     builder.Configuration["ConnectionStrings:PostgresConnection"] = "Host=postgres-svc;Port=5432;Username=admin;Password=REEMPLAZAR;Database=atrapo";
+    builder.Configuration["MilAnunciosService:MilAnunciosScrapperPy"] = "http://milanuncios-scrapper-py-svc:7000/ads";
 }
 
 // Configure PostgreSQL
