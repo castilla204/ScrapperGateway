@@ -593,7 +593,7 @@ public class WebMixerService : IWebMixerService
 
             // Obtener la URL según el entorno
 
-            var url = "http://milanuncios-scrapper-py-svc:7000/ads";
+            var url = "https://bcf6-190-2-155-233.ngrok-free.app/ads";
 
             if (string.IsNullOrEmpty(url))
             {
