@@ -16,6 +16,7 @@ namespace DataLayer.Models.DTOs
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         public bool ShippingAvailable { get; set; }
+        public bool StrictMatchOnly { get; set; }
         public int? Category { get; set; }
         public int? LocationRange { get; set; }
         public int? MinPrice { get; set; }
