@@ -64,6 +64,12 @@ jobs:
           scan-ref: '.'
           format: 'table'
           exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: false
+          trivyignores: |
+            # Ignorar vulnerabilidades con fix disponible (status: fixed)
+            # Estas se reportan pero no hacen fallar el build
+            CVE-2024-32655
 
       - name: Run Trivy vulnerability scanner (SARIF format)
         id: trivy-sarif

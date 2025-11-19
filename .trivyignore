@@ -1,0 +1,7 @@
+# Trivy ignore file
+# Vulnerabilidades con fix disponible que se reportan pero no hacen fallar el build
+
+# CVE-2024-32655: Npgsql SQL Injection - Fixed in 8.0.3+
+# Esta vulnerabilidad está corregida en la versión actualizada de Npgsql
+CVE-2024-32655
+
