@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scrapper-gateway-ingress
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: scrapper-gateway.inspecciono.com  # Cambiar si necesitas otro dominio
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: scrapper-gateway-svc
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - scrapper-gateway.inspecciono.com
+    secretName: scrapper-gateway-ssl
+
